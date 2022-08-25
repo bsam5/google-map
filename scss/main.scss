@@ -1,0 +1,76 @@
+body {
+  margin: 0px;
+  padding: 0px;
+}
+#map {
+  height: 100vh;
+  width: 100%;
+}
+// img marker
+.img-place {
+  width: 250px;
+  height: 100px;
+}
+.checked {
+  color: orange;
+}
+.point {
+  width: 15px;
+  height: 15px;
+  opacity: 0.2;
+  display: inline-block;
+  border-radius: 50%;
+  margin: 10px 5px 0 0;
+  &.active {
+    opacity: 1;
+  }
+}
+.green {
+  background-color: green;
+}
+.red {
+  background-color: red;
+}
+// button user location
+.custom-map-control-button {
+  width: 40px;
+  bottom: 109px !important;
+  top: auto !important;
+  left: auto !important;
+  right: 10px !important;
+  outline: none;
+  background: rgb(255, 255, 255);
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  padding: 4px 0px;
+  border-radius: 2px;
+  transition: 0.3s;
+  .icon-location {
+    transition: 0.3s;
+    opacity: 0.5;
+  }
+  &:hover {
+    .icon-location {
+      opacity: 1;
+    }
+  }
+}
+//  box search
+#pac-input {
+  background-color: rgb(255, 255, 255);
+  font-family: Roboto;
+  font-size: 18px;
+  text-overflow: ellipsis;
+  width: 400px;
+  font-weight: 300;
+  margin: 10px;
+  padding: 9px 10px;
+  outline: none;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  border-radius: 2px;
+}
