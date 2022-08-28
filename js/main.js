@@ -1,3 +1,17 @@
+// checkStar
+
+function checkStar(numCheck) {
+  let star = "";
+  for (let i = 0; i < 5; i++) {
+    if (i < numCheck) {
+      star += '<span class="fa fa-star checked"></span>';
+    } else {
+      star += '<span class="fa fa-star"></span>';
+    }
+  }
+  return star;
+}
+
 // function button location user
 function btnUesr(map) {
   infoWindow = new google.maps.InfoWindow();
@@ -18,8 +32,9 @@ function btnUesr(map) {
           };
 
           infoWindow.setPosition(pos);
-          infoWindow.setContent("Location found.");
+          infoWindow.setContent("your Location");
           infoWindow.open(map);
+          map.zoom = 12;
           map.setCenter(pos);
         },
         () => {
@@ -107,123 +122,105 @@ function boxSearch(map) {
     map.fitBounds(bounds);
   });
 }
+//   btnType
+function btnType(markers) {
+  let btnType = document.querySelectorAll('.btn-type .btn');
+  btnType.forEach(el => {
+    el.onclick = () => {
+      markers.forEach((mark) => {
+        mark.setVisible(true);
+        if (mark.type !== el.getAttribute('data-type')) {
+          mark.setVisible(false);
+        }
+      })
+    }
+  });
+}
 
 // Initialize and add the map
 function initAutocomplete() {
   let infowindow = new google.maps.InfoWindow();
   // The map, centered at Uluru
   const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 13,
+    zoom: 2,
     center: new google.maps.LatLng(31.52013, 34.433868),
+
   });
   // icons
   const icons = {
     street: {
       icon: "image/street-icons.jpg",
     },
-    harbor: {
-      icon: "image/harbor-icons.jpg",
-    },
-    village: {
-      icon: "image/village-icons.jpg",
+    university: {
+      icon: "image/university-icons.jpg",
     },
   };
 
   // The location
-  const features = [
-    {
-      position: new google.maps.LatLng(31.500995, 34.465566),
-      title: 'شارع صلاح الدين',
-      img: "image/street.jpg",
-      evaluation: 4,
-      opened: true,
-      type: 'street',
-    },
-    {
-      position: new google.maps.LatLng(31.529335, 34.430762),
-      title: "ميناء غزة",
-      img: "image/harbor.jpg",
-      evaluation: 5,
-      opened: false,
-      type: 'harbor',
-    },
-    {
-      position: new google.maps.LatLng(31.502312, 34.414764),
-      title: "شارع جمال عبد الناصر",
-      img: "image/street.jpg",
-      evaluation: 3,
-      opened: true,
-      type: 'street',
-    },
-    {
-      position: new google.maps.LatLng(31.550599, 34.498178),
-      title: "بيت لاهيا",
-      img: "image/bet-lahya.jpg",
-      evaluation: 2,
-      opened: true,
-      type: 'village',
+  class mark {
+    constructor(lat, lng, title, img, evaluation, opened, type) {
+      this.position = new google.maps.LatLng(lat, lng);
+      this.title = title || 'unknown';
+      this.img = `image/${img}`;
+      this.evaluation = evaluation;
+      this.opened = opened;
+      this.type = type;
 
-    },
-  ];
-  // create marker
-  const marker = [];
-  for (let i = 0; i < features.length; i++) {
-    marker.push(new google.maps.Marker(
-      {
-        position: features[i].position,
-        icon: icons[features[i].type].icon,
-        title: features[i].title,
-        map: map,
-      })
-    )
-  }
-
-  function checkStar(numCheck) {
-    let star = "";
-    for (let i = 0; i < 5; i++) {
-      if (i < numCheck) {
-        star += '<span class="fa fa-star checked"></span>';
-      } else {
-        star += '<span class="fa fa-star"></span>';
-      }
     }
-    return star;
   }
-  //  add marker to page
-  marker.forEach((e) => {
-    e.addListener("click", (el) => {
-      for (let i = 0; i < features.length; i++) {
-        if (e.title === features[i].title) {
-          infowindow.setContent(`<div id="content">
-            <div id="siteNotice">
-            </div>
-            <h1 id="firstHeading" class="firstHeading">${features[i].title}</h1>
-            <div id="bodyContent">
-            <img class="img-place" src="${features[i].img}"/>
-            <p>${features[i].title}</p>
-            ${checkStar(features[i].evaluation)}
-            <div>
-            <span class='green point ${features[i].opened ? 'active' : ''}'></span>
-            <span class='red point ${features[i].opened ? '' : 'active'}'></span>
-            </div></div>
-            </div>`,
-          );
-        }
-      }
-      infowindow.open({
-        anchor: e,
-        map,
-        shouldFocus: false,
-      });
-    })
+
+  const locations = [
+    new mark(31.500995, 34.465566, 'شارع صلاح الدين', 'street.jpg', 4, true, 'street'),
+    new mark(31.502312, 34.414764, "شارع جمال عبد الناصر", 'street.jpg', 3, false, 'street'),
+    new mark(31.550599, 34.498178, "بيت لاهيا", 'street.jpg', 5, true, 'street'),
+    new mark(31.514587, 34.440492, " جامعة الازهر", 'alazhar.jpg', 5, true, 'university'),
+    new mark(31.514258, 34.43856, "جامعة الاسلامية", 'islamic.jpg', 5, false, 'university'),
+  ]
+
+  let markers = locations.map((locations) => {
+    const marker = new google.maps.Marker({
+      position: locations.position,
+      icon: icons[locations.type].icon,
+      title: locations.title,
+      type: locations.type,
+      map: map,
+    });
+
+    marker.addListener("click", () => {
+      infoWindow.setContent(`<div id="content">
+                 <div id="siteNotice">
+                 </div>
+                <h1 id="firstHeading" class="firstHeading">${locations.title}</h1>
+                <div id="bodyContent">
+                <img class="img-place" src="${locations.img}"/>
+                <p>${locations.title}</p>
+                ${checkStar(locations.evaluation)}
+                <div>
+                <span class='green point ${locations.opened ? 'active' : ''}'></span>
+                <span class='red point ${locations.opened ? '' : 'active'}'></span>
+                </div>
+                </div>
+                 </div>`);
+      infoWindow.open(map, marker);
+    });
+    return marker;
   })
+
+  const markerCluster = new markerClusterer.MarkerClusterer({
+    map,
+    markers,
+    ignoreHidden: true,
+  });
+
 
   //  button user location
   btnUesr(map);
-
+  //  box search 
   boxSearch(map);
-}
+  // btn type
+  btnType(markers);
 
+}
 
 
 window.initAutocomplete = initAutocomplete;
